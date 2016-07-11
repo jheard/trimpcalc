@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Trimps Perk Calculator</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script src="https://raw.githubusercontent.com/jquery/jquery-mousewheel/master/jquery.mousewheel.min.js"></script>
+        <script>
+            var perks = {
+                "coordinated": {
+                    baseCost: 150000,
+                    target: "coordinated",
+                    ratio: 1
+                },
+                "carpentry": {
+                    baseCost: 25,
+                    target: "coordinated",
+                    ratio: 2.5
+                },
+                "artisanistry": {
+                    baseCost: 15,
+                    target: "carpentry",
+                    ratio: 4
+                },
+                "looting": {
+                    baseCost: 1,
+                    target: "artisanistry",
+                    ratio: 1
+                },
+                "resourceful": {
+                    baseCost: 50000,
+                    target: "artisanistry",
+                    ratio: 2
+                },
+                "resilience": {
+                    baseCost: 100,
+                    target: "artisanistry",
+                    ratio: 2
+                },
+                "power": {
+                    baseCost: 1,
+                    target: "artisanistry",
+                    ratio: 4
+                },
+                "motivation": {
+                    baseCost: 2,
+                    target: "artisanistry",
+                    ratio: 5
+                },
+                "toughness": {
+                    baseCost: 1,
+                    target: "power",
+                    ratio: 3
+                },
+                "pheromones": {
+                    baseCost: 3,
+                    target: "toughness",
+                    ratio: 2
+                }
+            };
+
+            var calcCost = function (perk, level) {
+                "use strict";
+
+                return Math.ceil(level / 2 + perks[perk].baseCost * Math.pow(1.3, level));
+            };
+
+            function recalculateCosts() {
+                for (perk in perks) {
+                    perks[perk].cost = calcCost(perk,$("#"+perk+" input").val());
+                    $("#"+perk+" .cost").text(perks[perk].cost.toLocaleString());
+                    perks[perk].targetCost = Math.ceil(perks[perks[perk].target].cost / perks[perk].ratio);
+                    $("#"+perk+" .targetCost").text(perks[perk].targetCost.toLocaleString());
+                    if (perks[perk].targetCost < perks[perk].cost) {
+                        $("#"+perk).addClass("ui-state-error");
+                    } else {
+                        $("#"+perk).removeClass("ui-state-error");
+                    }
+                }
+            }
+            
+            $(function () {
+                $("input").spinner({
+                    min: 1,
+                    change: recalculateCosts
+                }).mousewheel(recalculateCosts);
+                recalculateCosts();
+                $("#info").dialog();
+            });
+        </script>
+        <style>
+        tr {
+            text-align: right;
+        }
+        th {
+            text-align: center;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="info" title="Instructions">
+            <p>Enter the level displayed on the "View Perks" screen. You have to click off of the input box to recalculate the values.</p>
+            <p>Only upgrade Coordinated once everything else is red.</p>
+        </div>
+        <div id="content">
+            <table>
+                <thead>
+                    <th>Perk</th>
+                    <th>Cost</th>
+                    <th>Target Cost</th>
+                </thead>
+                <tr id="coordinated">
+                    <td><label>Coordinated: <input name="level"></label></td>
+                    <td><span class="cost"></span></td>
+                    <td><span class="targetCost"></span></td>
+                </tr>
+                <tr id="carpentry">
+                    <td><label>Carpentry: <input name="level"></label></td>
+                    <td><span class="cost"></span></td>
+                    <td><span class="targetCost"></span></td>
+                </tr>
+                <tr id="artisanistry">
+                    <td><label>Artisanistry: <input id="spinner"></label></td>
+                    <td><span class="cost"></span></td>
+                    <td><span class="targetCost"></span></td>
+                </tr>
+                <tr id="looting">
+                    <td><label>Looting: <input id="spinner"></label></td>
+                    <td><span class="cost"></span></td>
+                    <td><span class="targetCost"></span></td>
+                </tr>
+                <tr id="resourceful">
+                    <td><label>Resourceful: <input id="spinner"></label></td>
+                    <td><span class="cost"></span></td>
+                    <td><span class="targetCost"></span></td>
+                </tr>
+                <tr id="resilience">
+                    <td><label>Resilience: <input id="spinner"></label></td>
+                    <td><span class="cost"></span></td>
+                    <td><span class="targetCost"></span></td>
+                </tr>
+                <tr id="power">
+                    <td><label>Power: <input id="spinner"></label></td>
+                    <td><span class="cost"></span></td>
+                    <td><span class="targetCost"></span></td>
+                </tr>
+                <tr id="motivation">
+                    <td><label>Motivation: <input id="spinner"></label></td>
+                    <td><span class="cost"></span></td>
+                    <td><span class="targetCost"></span></td>
+                </tr>
+                <tr id="toughness">
+                    <td><label>Toughness: <input id="spinner"></label></td>
+                    <td><span class="cost"></span></td>
+                    <td><span class="targetCost"></span></td>
+                </tr>
+                <tr id="pheromones">
+                    <td><label>Pheromones: <input id="spinner"></label></td>
+                    <td><span class="cost"></span></td>
+                    <td><span class="targetCost"></span></td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
